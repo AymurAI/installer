@@ -39,7 +39,6 @@ The repository structure is as follows:
 └── scripts
     ├── headers
     │   ├── install_backend.nsh
-    │   ├── install_docker.nsh
     │   ├── install_frontend.nsh
     │   └── uninstall.nsh
     └── installer.nsi
