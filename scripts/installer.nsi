@@ -51,13 +51,7 @@ SectionEnd
 
 Section "Desktop shortcuts"
     ; Create a shortcut on the desktop to the client executable
-    CreateShortCut "$DESKTOP\${APP_NAME}-Client.lnk" "$INSTDIR\${APP_NAME}.exe"
-    
-    ; Create a shortcut on the desktop to the server executable
-    CreateShortCut "$DESKTOP\${APP_NAME}-Server.lnk" "$INSTDIR\run_server.bat" "" "$INSTDIR\api\resources\static\logo256-text.ico"
-    
-    ; Create a shortcut on the desktop to both the server and the client executables
-    CreateShortCut "$DESKTOP\${APP_NAME}-Client-Server.lnk" "$INSTDIR\run_client_server.bat"  "" "$INSTDIR\api\resources\static\logo256-text.ico"
+    CreateShortCut "$DESKTOP\${APP_NAME}.lnk" "$INSTDIR\${APP_NAME}.exe"
 SectionEnd
 
 Section "Uninstaller"

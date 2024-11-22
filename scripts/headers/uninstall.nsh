@@ -52,7 +52,5 @@
     RMDir /r "$INSTDIR"
 
     ; Remove desktop shortcuts
-    Delete "$DESKTOP\${APP_NAME}-Client.lnk"
-    Delete "$DESKTOP\${APP_NAME}-Server.lnk"
-    Delete "$DESKTOP\${APP_NAME}-Client-Server.lnk"
+    Delete "$DESKTOP\${APP_NAME}.lnk"
 !macroend
