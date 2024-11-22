@@ -33,7 +33,8 @@ The repository structure is as follows:
 │   ├── aymurai-1.1.0-py3-none-any.whl
 │   ├── environment.yml
 │   ├── install.bat
-│   ├── run_client_server.bat
+|   ├── LibreOffice_24.8.2_Win_x86-64.msi
+|   ├── Miniconda3-py312_24.7.1-0-Windows-x86_64.exe
 │   ├── run_server.bat
 │   └── uninstall.bat
 └── scripts
