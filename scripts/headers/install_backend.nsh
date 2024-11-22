@@ -14,7 +14,6 @@
     File "${SOURCE_DIR}\environment.yml"
     File "${SOURCE_DIR}\install.bat"
     File "${SOURCE_DIR}\run_server.bat"
-    File "${SOURCE_DIR}\run_client_server.bat"
     File "${SOURCE_DIR}\api_changes.patch"
     File /r "${SOURCE_DIR}\api\*.*"
 
