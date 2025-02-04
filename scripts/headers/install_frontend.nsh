@@ -11,16 +11,16 @@
         Goto finish
 
     frontend_download:
-        DetailPrint "Downloading front-end..."
-
         ; Set output path
         SetOutPath $INSTDIR
 
         ; Download ZIP from GitHub
-        ExecWait 'powershell -Command "Invoke-WebRequest -Uri ${FRONTEND_URL} -OutFile \"$INSTDIR\${APP_NAME}.zip\""'
+        DetailPrint "Downloading front-end..."
+        nsExec::ExecToLog 'powershell -Command "Invoke-WebRequest -Uri ${FRONTEND_URL} -OutFile \"$INSTDIR\${APP_NAME}.zip\""'
         
         ; Unzip downloaded file
-        ExecWait 'powershell -Command "Expand-Archive -Path \"$INSTDIR\${APP_NAME}.zip\" -DestinationPath \"$INSTDIR\" -Force"'
+        DetailPrint "Extracting front-end..."
+        nsExec::ExecToLog 'powershell -Command "Expand-Archive -Path \"$INSTDIR\${APP_NAME}.zip\" -DestinationPath \"$INSTDIR\" -Force"'
         
         ; Remove ZIP file after extraction
         Delete "$INSTDIR\${APP_NAME}.zip"
