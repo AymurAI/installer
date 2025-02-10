@@ -10,11 +10,10 @@
     ; Copy installation files
     File "${SOURCE_DIR}\Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
     File "${SOURCE_DIR}\LibreOffice_24.8.2_Win_x86-64.msi"
-    File "${SOURCE_DIR}\aymurai-1.1.0-py3-none-any.whl"
+    File "${SOURCE_DIR}\aymurai-1.1.1-py3-none-any.whl"
     File "${SOURCE_DIR}\environment.yml"
     File "${SOURCE_DIR}\install.bat"
     File "${SOURCE_DIR}\run_server.bat"
-    File "${SOURCE_DIR}\api_changes.patch"
     File /r "${SOURCE_DIR}\api\*.*"
 
     ; Run the installation batch file
@@ -37,12 +36,11 @@
     DetailPrint "Removing installation files..."
     Delete "$INSTDIR\Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
     Delete "$INSTDIR\LibreOffice_24.8.2_Win_x86-64.msi"
-    Delete "$INSTDIR\aymurai-1.1.0-py3-none-any.whl"
+    Delete "$INSTDIR\aymurai-1.1.1-py3-none-any.whl"
     Delete "$INSTDIR\install.bat"
-    Delete "$INSTDIR\api_changes.patch"
 
     ; Write installation path to registry
     WriteRegStr HKLM "Software\${APP_NAME}" "Install_Dir" "$INSTDIR"
-    
+
     DetailPrint "Back-End Installation successful."
 !macroend

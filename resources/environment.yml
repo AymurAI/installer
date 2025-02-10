@@ -8,7 +8,4 @@ dependencies:
   - openjdk==22.0.1
   - git==2.46.2
   - pip:
-    - ./aymurai-1.1.0-py3-none-any.whl
-    # Instal forked version of textract to fix this issue
-    # https://github.com/deanmalmgren/textract/issues/313
-    -  textract @ git+https://github.com/MaxEtMoritz/textract@master
+    - ./aymurai-1.1.1-py3-none-any.whl

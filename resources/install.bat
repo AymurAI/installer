@@ -63,8 +63,10 @@ if errorlevel 1 (
     REM Check if libmagic path is already in the PATH environment variable
     powershell -Command "if (-not $env:PATH.Contains('magic\libmagic')) { Write-Host 'libmagic path not found in PATH, adding it...'; $sitePackages = (Get-ChildItem -Path (Get-Command python).Source).Directory.Parent.FullName + '\aymurai-backend\Lib\site-packages'; $libmagicPath = Join-Path -Path $sitePackages -ChildPath 'magic\libmagic'; [System.Environment]::SetEnvironmentVariable('PATH', $env:PATH + ';' + $libmagicPath, [System.EnvironmentVariableTarget]::User); Write-Host 'libmagic path added to PATH.' } else { Write-Host 'libmagic path already exists in PATH.' }"
 
-    REM Install Spacy's Spanish model
-    call python -m spacy download es_core_news_sm
+    REM Instal forked version of textract to fix this issue
+    REM https://github.com/deanmalmgren/textract/issues/313
+    call pip uninstall -y textract
+    call pip install "textract @ git+https://github.com/MaxEtMoritz/textract@master"
 
     if errorlevel 1 (
         echo Conda environment creation failed.
@@ -74,31 +76,35 @@ if errorlevel 1 (
     )
 ) else (
     echo Conda environment '%ENV_NAME%' already exists.
+    REM Activate the environment
+    call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
 )
 
 REM Create the api resources directory if it doesn't exist
-if not exist "%SCRIPT_DIR%api\resources" (
-    mkdir "%SCRIPT_DIR%api\resources"
+if not exist "%SCRIPT_DIR%api\resources\api" (
+    mkdir "%SCRIPT_DIR%api\resources\api"
 )
 
 REM Move pipelines and static directories to the api directory
-move "%SCRIPT_DIR%pipelines" "%SCRIPT_DIR%api\resources\pipelines"
-move "%SCRIPT_DIR%static" "%SCRIPT_DIR%api\resources\static"
+if exist "%SCRIPT_DIR%pipelines" (
+    move "%SCRIPT_DIR%pipelines" "%SCRIPT_DIR%api\resources\pipelines"
+)
+if exist "%SCRIPT_DIR%static" (
+    move "%SCRIPT_DIR%static" "%SCRIPT_DIR%api\resources\api\static"
+)
 
 REM Download the api module from the repository
-curl --ssl-no-revoke -o "%SCRIPT_DIR%api\__init__.py" -O https://raw.githubusercontent.com/AymurAI/backend/refs/heads/dev/aymurai/api/__init__.py
-curl --ssl-no-revoke -o "%SCRIPT_DIR%api\main.py" -O https://raw.githubusercontent.com/AymurAI/backend/refs/heads/dev/aymurai/api/main.py
-
-REM Patch the main.py file to properly run on Windows
-call patch --verbose api\main.py < api_changes.patch
+if not exist "%SCRIPT_DIR%api\__init__.py" (
+    curl --ssl-no-revoke -o "%SCRIPT_DIR%api\__init__.py" https://raw.githubusercontent.com/AymurAI/backend/refs/heads/dev/aymurai/api/__init__.py
+)
+if not exist "%SCRIPT_DIR%api\main.py" (
+    curl --ssl-no-revoke -o "%SCRIPT_DIR%api\main.py" https://raw.githubusercontent.com/AymurAI/backend/refs/heads/dev/aymurai/api/main.py
+)
 
 REM Create the models directory if it doesn't exist
 if not exist "%SCRIPT_DIR%models" (
     mkdir "%SCRIPT_DIR%models"
 )
-
-REM Activate the environment
-call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
 
 REM Define the cache directories
 set "AYMURAI_CACHE_BASEPATH=%SCRIPT_DIR%cache\aymurai"
@@ -106,11 +112,11 @@ set "DISKCACHE_ROOT=%SCRIPT_DIR%cache\diskcache"
 set "FLAIR_CACHE_ROOT=%SCRIPT_DIR%models\flair"
 set "TFHUB_CACHE_DIR=%SCRIPT_DIR%models\tfhub"
 
+REM Define the RESOURCES_BASEPATH environment variable
+set "RESOURCES_BASEPATH=%SCRIPT_DIR%api\resources"
+
 REM Run the api main.py file to download the models
 call python "%SCRIPT_DIR%api\main.py"
-
-REM Deactivate the environment
-call conda deactivate
 
 REM Exit the script
 echo Backend dependencies installed successfully.
