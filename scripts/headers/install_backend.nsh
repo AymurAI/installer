@@ -19,8 +19,8 @@
 
     ; Run the installation batch file
     DetailPrint "Installing backend dependencies..."
-    ExecWait '"$INSTDIR\install.bat"' $0
-
+    nsExec::ExecToLog '"$INSTDIR\install.bat"'
+    
     ; Install LibreOffice silently in the installation directory
     nsExec::ExecToLog 'msiexec /i "$INSTDIR\LibreOffice_24.8.2_Win_x86-64.msi" /qn'
 
@@ -33,21 +33,16 @@
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-WinUserLanguageList"'
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-Culture"'
 
-    ${If} $0 != 0
-        MessageBox MB_OK|MB_ICONEXCLAMATION "Back-End Installation failed. Please try again."
-        Abort
-    ${Else}
-        ; Remove installation files
-        DetailPrint "Removing installation files..."
-        Delete "$INSTDIR\Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
-        Delete "$INSTDIR\LibreOffice_24.8.2_Win_x86-64.msi"
-        Delete "$INSTDIR\aymurai-1.1.0-py3-none-any.whl"
-        Delete "$INSTDIR\install.bat"
-        Delete "$INSTDIR\api_changes.patch"
-
-        DetailPrint "Back-End Installation successful."
-    ${EndIf}
+    ; Remove installation files
+    DetailPrint "Removing installation files..."
+    Delete "$INSTDIR\Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
+    Delete "$INSTDIR\LibreOffice_24.8.2_Win_x86-64.msi"
+    Delete "$INSTDIR\aymurai-1.1.0-py3-none-any.whl"
+    Delete "$INSTDIR\install.bat"
+    Delete "$INSTDIR\api_changes.patch"
 
     ; Write installation path to registry
     WriteRegStr HKLM "Software\${APP_NAME}" "Install_Dir" "$INSTDIR"
+    
+    DetailPrint "Back-End Installation successful."
 !macroend
