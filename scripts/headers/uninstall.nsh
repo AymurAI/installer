@@ -15,11 +15,11 @@
 
     uninstall_miniconda:
         ; Run the uninstallation batch file with Miniconda uninstallation flag
-        ExecWait '"$INSTDIR\uninstall.bat" true'
+        nsExec::ExecToLog '"$INSTDIR\uninstall.bat" true'
         
     skip_miniconda:
         ; Run the uninstallation batch file without Miniconda uninstallation flag
-        ExecWait '"$INSTDIR\uninstall.bat" false'
+        nsExec::ExecToLog '"$INSTDIR\uninstall.bat" false'
 
     ; Prompt user to uninstall LibreOffice
     MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to uninstall LibreOffice?" IDYES uninstall_libreoffice IDNO skip_libreoffice
