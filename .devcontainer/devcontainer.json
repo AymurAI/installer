@@ -15,7 +15,8 @@
                 "ms-vscode-remote.remote-containers",
                 "eamodio.gitlens",
                 "GitHub.copilot",
-                "GitHub.copilot-labs"
+                "GitHub.copilot-labs",
+                "seatonjiang.gitmoji-vscode"
             ]
         }
     },
