@@ -30,11 +30,11 @@ The repository structure is as follows:
 │   │   └── static
 │   │       └── logo256-text.ico
 │   ├── api_changes.patch
-│   ├── aymurai-1.1.0-py3-none-any.whl
+│   ├── aymurai-<VERSION>-py3-none-any.whl
 │   ├── environment.yml
 │   ├── install.bat
-|   ├── LibreOffice_24.8.2_Win_x86-64.msi
-|   ├── Miniconda3-py312_24.7.1-0-Windows-x86_64.exe
+|   ├── LibreOffice_<VERSION>_Win_x86-64.msi
+|   ├── Miniconda3-py312_<VERSION>-0-Windows-x86_64.exe
 │   ├── run_server.bat
 │   └── uninstall.bat
 └── scripts
