@@ -12,7 +12,7 @@ OutFile "${OUTPUT_DIR}\${APP_NAME}-Installer.exe"
 RequestExecutionLevel admin
 
 ; The default installation directory
-InstallDir $DOCUMENTS\${APP_NAME}
+InstallDir $PROGRAMFILES64\${APP_NAME}
 
 ; Registry key to store the installation directory
 InstallDirRegKey HKLM "Software\${APP_NAME}" "Install_Dir"
