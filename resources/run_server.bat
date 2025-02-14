@@ -33,6 +33,7 @@ set "AYMURAI_CACHE_BASEPATH=%SCRIPT_DIR%cache\aymurai"
 set "DISKCACHE_ROOT=%SCRIPT_DIR%cache\diskcache"
 set "FLAIR_CACHE_ROOT=%SCRIPT_DIR%models\flair"
 set "TFHUB_CACHE_DIR=%SCRIPT_DIR%models\tfhub"
+set "SQLALCHEMY_DATABASE_URI=sqlite:///%SCRIPT_DIR%api\resources\cache\sqlite\database.db"
 set "RESOURCES_BASEPATH=%SCRIPT_DIR%api\resources"
 set "LIBREOFFICE_BIN=C:\\Program Files\\LibreOffice\\program\\soffice.exe"
 
