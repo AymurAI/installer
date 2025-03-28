@@ -70,7 +70,7 @@ To download the LibreOffice and Miniconda installers into the `resources` direct
 
 ```bash
 # Download LibreOffice installer
-wget -P resources https://download.documentfoundation.org/libreoffice/stable/24.8.2/win/x86_64/LibreOffice_24.8.2_Win_x86-64.msi
+wget -P resources https://download.documentfoundation.org/libreoffice/stable/25.2.2/win/x86_64/LibreOffice_25.2.2_Win_x86-64.msi
 
 # Download Miniconda installer
 wget -P resources https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Windows-x86_64.exe

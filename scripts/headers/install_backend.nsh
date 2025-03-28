@@ -9,7 +9,7 @@
 
     ; Copy installation files
     File "${SOURCE_DIR}\Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
-    File "${SOURCE_DIR}\LibreOffice_24.8.2_Win_x86-64.msi"
+    File "${SOURCE_DIR}\LibreOffice_25.2.2_Win_x86-64.msi"
     File "${SOURCE_DIR}\aymurai-1.1.1-py3-none-any.whl"
     File "${SOURCE_DIR}\environment.yml"
     File "${SOURCE_DIR}\install.bat"
@@ -20,9 +20,6 @@
     DetailPrint "Installing backend dependencies..."
     nsExec::ExecToLog '"$INSTDIR\install.bat"'
     
-    ; Install LibreOffice silently in the installation directory
-    nsExec::ExecToLog 'msiexec /i "$INSTDIR\LibreOffice_24.8.2_Win_x86-64.msi" /qn'
-
     ; Add 'es-AR' locale and set 'en-US' as default
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-WinSystemLocale"'
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-WinSystemLocale -SystemLocale \"en-US\""'
@@ -35,7 +32,7 @@
     ; Remove installation files
     DetailPrint "Removing installation files..."
     Delete "$INSTDIR\Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
-    Delete "$INSTDIR\LibreOffice_24.8.2_Win_x86-64.msi"
+    Delete "$INSTDIR\LibreOffice_25.2.2_Win_x86-64.msi"
     Delete "$INSTDIR\aymurai-1.1.1-py3-none-any.whl"
     Delete "$INSTDIR\install.bat"
 
