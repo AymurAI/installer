@@ -16,40 +16,33 @@
     uninstall_miniconda:
         ; Run the uninstallation batch file with Miniconda uninstallation flag
         nsExec::ExecToLog '"$INSTDIR\uninstall.bat" true'
-        
+        Goto end_miniconda
+
     skip_miniconda:
         ; Run the uninstallation batch file without Miniconda uninstallation flag
         nsExec::ExecToLog '"$INSTDIR\uninstall.bat" false'
+
+    end_miniconda:
+        ; Continue with the uninstallation process
 
     ; Prompt user to uninstall LibreOffice
     MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to uninstall LibreOffice?" IDYES uninstall_libreoffice IDNO skip_libreoffice
 
     uninstall_libreoffice:
         ; Uninstall LibreOffice
+        DetailPrint "Uninstalling LibreOffice..."
         ; NOTE: The GUID is unique to the installed version of LibreOffice
-        nsExec::ExecToLog 'msiexec /x "{2B5B0425-12C7-4D48-ACA8-38CCA3082A81}" /qn /norestart'
+        nsExec::ExecToLog 'msiexec /x "{632F6BB4-FB41-4870-9EA9-346A347CABA6}" /qn /norestart'
+        DetailPrint "LibreOffice uninstallation complete."
     
     skip_libreoffice:
         ; Continue with the uninstallation process
     
-    ; Delete uninstaller
-    Delete "$INSTDIR\Uninstall.exe"
-
     ; Remove registry keys
     DeleteRegKey HKLM "Software\${APP_NAME}"
     
-    ; Remove resources directory and all its contents
-    RMDir /r "$INSTDIR\resources"
-
-    ; Check if the directory still exists
-    IfFileExists "$INSTDIR\resources\*.*" 0 force
-
-    force:
-        ; If the directory still exists, use an elevated command to forcefully remove it
-        Exec '"$SYSDIR\cmd.exe" /C "rmdir /S /Q \"$INSTDIR\resources\""'
-    
-    ; Remove installation directory and all its contents, includind subdirectories
-    RMDir /r "$INSTDIR"
+    ; Remove installation directory and all its contents, including subdirectories
+    RMDir /r /REBOOTOK "$INSTDIR"
 
     ; Remove desktop shortcuts
     Delete "$DESKTOP\${APP_NAME}.lnk"
