@@ -43,6 +43,7 @@ if exist "%CONDA_DIR%" (
 )
 
 REM Update PATH environment variable for the current script
+setlocal
 set "PATH=%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%CONDA_DIR%\bin;%PATH%"
 
 REM Check if Conda executable exists
