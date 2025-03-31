@@ -13,24 +13,9 @@ set "LIBREOFFICE_INSTALLER=%SCRIPT_DIR%LibreOffice_25.2.2_Win_x86-64.msi"
 
 if not defined LIBREOFFICE_PATH (
     REM Install LibreOffice
-    echo LibreOffice is not installed. Installing LibreOffice...
+    echo Installing LibreOffice...
     call msiexec /i "%LIBREOFFICE_INSTALLER%" /qn /norestart
-
-    REM Check again if LibreOffice was installed successfully
-    for /f "delims=" %%A in ('where soffice.exe 2^>nul') do (
-        set "LIBREOFFICE_PATH=%%A"
-    )
-
-    if not defined LIBREOFFICE_PATH (
-        echo LibreOffice installation failed.
-        exit /b 1
-    )
     echo LibreOffice installed successfully.
-    
-    REM Launch LibreOffice in headless mode and terminate after initialization
-    echo Launching LibreOffice in headless mode...
-    cmd /c "%LIBREOFFICE_PATH%" --headless --terminate_after_init >nul 2>&1
-    echo LibreOffice launched and terminated successfully.
 ) else (
     echo LibreOffice is already installed.
 )
@@ -86,7 +71,7 @@ if errorlevel 1 (
     
     REM Activate the environment
     call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
-
+    
     REM Workaround to fix python-magic issue
     REM https://github.com/ahupp/python-magic/issues/248
     call pip uninstall -y python-magic
