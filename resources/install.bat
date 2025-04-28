@@ -2,24 +2,6 @@
 REM Define the directory where the script is located
 set "SCRIPT_DIR=%~dp0"
 
-REM Check if LibreOffice is already installed
-echo Checking if LibreOffice is already installed...
-for /f "delims=" %%A in ('where soffice.exe 2^>nul') do (
-    set "LIBREOFFICE_PATH=%%A"
-)
-
-REM Define LibreOffice installer file path
-set "LIBREOFFICE_INSTALLER=%SCRIPT_DIR%LibreOffice_25.2.2_Win_x86-64.msi"
-
-if not defined LIBREOFFICE_PATH (
-    REM Install LibreOffice
-    echo Installing LibreOffice...
-    call msiexec /i "%LIBREOFFICE_INSTALLER%" /qn /norestart
-    echo LibreOffice installed successfully.
-) else (
-    echo LibreOffice is already installed.
-)
-
 REM Define Miniconda installation directory
 if not defined CONDA_DIR (
     set "CONDA_DIR=%USERPROFILE%\Miniconda3"

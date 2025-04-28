@@ -16,6 +16,11 @@
     File "${SOURCE_DIR}\run_server.bat"
     File /r "${SOURCE_DIR}\api\*.*"
 
+    ; Install LibreOffice silently in the installation directory
+    DetailPrint "Installing LibreOffice..."
+    nsExec::ExecToLog 'msiexec /i "$INSTDIR\LibreOffice_25.2.2_Win_x86-64.msi" /qn'
+    DetailPrint "LibreOffice installation completed."
+
     ; Run the installation batch file
     DetailPrint "Installing backend dependencies..."
     nsExec::ExecToLog '"$INSTDIR\install.bat"'
