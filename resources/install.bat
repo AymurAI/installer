@@ -50,6 +50,7 @@ call conda env list | findstr %ENV_NAME% >nul
 if errorlevel 1 (
     REM Create the Conda environment
     echo Creating Conda environment '%ENV_NAME%'...
+    set "PIP_EXISTS_ACTION=w"
     call "%CONDA_DIR%\Scripts\conda.exe" env create -f "%SCRIPT_DIR%environment.yml" -y
     
     REM Activate the environment
