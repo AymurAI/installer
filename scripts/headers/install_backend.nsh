@@ -14,6 +14,7 @@
     File "${SOURCE_DIR}\environment.yml"
     File "${SOURCE_DIR}\install.bat"
     File "${SOURCE_DIR}\run_server.bat"
+    File "${SOURCE_DIR}\output_limit.vbs"
     File /r "${SOURCE_DIR}\api\*.*"
 
     ; Install LibreOffice silently in the installation directory
@@ -23,7 +24,7 @@
 
     ; Run the installation batch file
     DetailPrint "Installing backend dependencies..."
-    nsExec::ExecToLog '"$INSTDIR\install.bat"'
+    nsExec::ExecToLog '"cscript.exe" //NOLOGO output_limit.vbs "$INSTDIR\install.bat"'
     
     ; Add 'es-AR' locale and set 'en-US' as default
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-WinSystemLocale"'
