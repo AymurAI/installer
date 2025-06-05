@@ -1,6 +1,6 @@
 ; Front-End Installation Header
 
-!define FRONTEND_URL "https://github.com/AymurAI/desktop-app/releases/download/1.20.2/AymurAI-win32-x64-1-20-2.rar"
+!define FRONTEND_URL "https://github.com/AymurAI/desktop-app/releases/download/1.20.2/AymurAI-win32-x64-1-20-2.zip"
 
 !macro InstallFrontend
     ; Check if front-end is already installed
