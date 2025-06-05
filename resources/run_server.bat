@@ -14,7 +14,7 @@ REM Force working directory to script location
 cd /d "%SCRIPT_DIR%"
 
 REM Define Miniconda installation directory
-set "CONDA_DIR=%USERPROFILE%\Miniconda3"
+set "CONDA_DIR=%USERPROFILE%\miniconda3"
 
 REM Update PATH environment variable for the current script
 set "PATH=%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%CONDA_DIR%\bin;%PATH%"

@@ -4,24 +4,15 @@ set "SCRIPT_DIR=%~dp0"
 
 REM Define Miniconda installation directory
 if not defined CONDA_DIR (
-    set "CONDA_DIR=%USERPROFILE%\Miniconda3"
+    set "CONDA_DIR=%USERPROFILE%\miniconda3"
 )
-
-REM Define Miniconda installer file path
-set "CONDA_INSTALLER=%SCRIPT_DIR%Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
 
 REM Check if Miniconda is already installed
 if exist "%CONDA_DIR%" (
     echo Miniconda is already installed.
 ) else (
-    REM Install Miniconda silently
-    echo Installing Miniconda...
-    call "%CONDA_INSTALLER%" /InstallationType=JustMe /AddToPath=0 /RegisterPython=0 /S /D=%CONDA_DIR%
-    if errorlevel 1 (
-        echo Miniconda installation failed.
-        exit /b 1
-    )
-    echo Miniconda installed.
+    echo Miniconda is not installed. Please install it first and try again.
+    exit /b 1
 )
 
 REM Update PATH environment variable for the current script
