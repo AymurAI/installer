@@ -14,6 +14,8 @@
     File "${SOURCE_DIR}\environment.yml"
     File "${SOURCE_DIR}\install.bat"
     File "${SOURCE_DIR}\run_server.bat"
+    File "${SOURCE_DIR}\gdownloader.py"
+
     File /r "${SOURCE_DIR}\api\*.*"
 
     ; Install LibreOffice silently in the installation directory
