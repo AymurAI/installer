@@ -16,7 +16,9 @@
 
     ; Run the installation batch file
     DetailPrint "Installing backend dependencies..."
-    nsExec::ExecToLog '"$INSTDIR\install.bat"'
+    nsExec::Exec '"$INSTDIR\install.bat"'
+    Pop $0 ; Get return value
+    DetailPrint "Installation process completed with code: $0"
     
     ; Add 'es-AR' locale and set 'en-US' as default
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-WinSystemLocale"'
