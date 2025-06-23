@@ -105,7 +105,7 @@ if not exist "%SCRIPT_DIR%api\main.py" (
 
 REM Create the models directory if it doesn't exist
 if not exist "%SCRIPT_DIR%models" (
-    call python "%SCRIPT_DIR%gdownloader.py" "1C15N3jJnJ1xleoXQGw3MLDvHVWnWpMmg" "%SCRIPT_DIR%models.zip"
+    call python "%SCRIPT_DIR%gdownloader.py" "1BMYcKHbe3lfVMOnX4QfTb8bTyyX6VYu6" "%SCRIPT_DIR%models.zip"
     powershell -Command "unzip -o '%SCRIPT_DIR%models.zip'"
     if errorlevel 1 (
         echo Failed to unzip models.
@@ -117,7 +117,7 @@ if not exist "%SCRIPT_DIR%models" (
 
 REM Create the cache directory if it doesn't exist
 if not exist "%SCRIPT_DIR%cache" (
-    call python "%SCRIPT_DIR%gdownloader.py" "1oHVVdeitbT3fXv3qXafwDn802TZIYRo6" "%SCRIPT_DIR%cache.zip"
+    call python "%SCRIPT_DIR%gdownloader.py" "1Qn9PCZq99pg1GzLxJvDbsLxlgCLao4Dp" "%SCRIPT_DIR%cache.zip"
     powershell -Command "unzip -o '%SCRIPT_DIR%cache.zip'"
     if errorlevel 1 (
         echo Failed to unzip cache.
