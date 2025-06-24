@@ -51,6 +51,7 @@ if not exist "%SCRIPT_DIR%full_env"  (
     if errorlevel 1 (
         REM Create the Conda environment
         echo Creating Conda environment '%ENV_NAME%'...
+        set "PIP_EXISTS_ACTION=w"
         call "%CONDA_DIR%\Scripts\conda.exe" env create -f "%SCRIPT_DIR%environment.yml" -y
         if errorlevel 1 (
             echo Conda environment creation failed.
