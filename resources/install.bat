@@ -44,30 +44,65 @@ if not defined ENV_NAME (
     echo Environment name not found in environment.yml.
     exit /b 1
 )
-
-REM Check if the Conda environment already exists
-call conda env list | findstr %ENV_NAME% >nul
-
-if errorlevel 1 (
-    REM Create the Conda environment
-    echo Creating Conda environment '%ENV_NAME%'...
-    call "%CONDA_DIR%\Scripts\conda.exe" env create -f "%SCRIPT_DIR%environment.yml" -y
-    
-    REM Activate the environment
-    call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
+REM Check if the Conda environment creation completed
+if not exist "%SCRIPT_DIR%full_env"  (
+    REM Check if the Conda environment already exists
+    call conda env list | findstr %ENV_NAME% >nul
+    if errorlevel 1 (
+        REM Create the Conda environment
+        echo Creating Conda environment '%ENV_NAME%'...
+        call "%CONDA_DIR%\Scripts\conda.exe" env create -f "%SCRIPT_DIR%environment.yml" -y
+        if errorlevel 1 (
+            echo Conda environment creation failed.
+            exit /b 1
+        )
+        REM Activate the environment
+        call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
+    ) else (
+        echo Updating Conda environment '%ENV_NAME%'...
+        REM Activate the environment
+        call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
+        REM Update the conda enviroment
+        call "%CONDA_DIR%\Scripts\conda.exe" env update -f "%SCRIPT_DIR%environment.yml"
+        if errorlevel 1 (
+            echo Conda environment update failed.
+            exit /b 1
+        )
+    )
     
     REM Workaround to fix python-magic issue
     REM https://github.com/ahupp/python-magic/issues/248
     call pip uninstall -y python-magic
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
+
     call pip install python-magic==0.4.27
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
     call pip install python-magic-bin==0.4.14
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
 
     REM Check if libmagic path is already in the PATH environment variable
     powershell -Command "if (-not $env:PATH.Contains('magic\libmagic')) { Write-Host 'libmagic path not found in PATH, adding it...'; $sitePackages = (Get-ChildItem -Path (Get-Command python).Source).Directory.Parent.FullName + '\aymurai-backend\Lib\site-packages'; $libmagicPath = Join-Path -Path $sitePackages -ChildPath 'magic\libmagic'; [System.Environment]::SetEnvironmentVariable('PATH', $env:PATH + ';' + $libmagicPath, [System.EnvironmentVariableTarget]::User); Write-Host 'libmagic path added to PATH.' } else { Write-Host 'libmagic path already exists in PATH.' }"
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
 
     REM Instal forked version of textract to fix this issue
     REM https://github.com/deanmalmgren/textract/issues/313
     call pip uninstall -y textract
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
     call pip install "textract @ git+https://github.com/MaxEtMoritz/textract@master"
 
     if errorlevel 1 (
@@ -75,9 +110,10 @@ if errorlevel 1 (
         exit /b 1
     ) else (
         echo Conda environment '%ENV_NAME%' created successfully.
+        call echo yes > "%SCRIPT_DIR%full_env"
     )
 ) else (
-    echo Conda environment '%ENV_NAME%' already exists.
+    echo Conda environment '%ENV_NAME%' already exists and is complete.
     REM Activate the environment
     call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
 )
