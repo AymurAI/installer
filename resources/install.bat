@@ -47,6 +47,7 @@ if not defined ENV_NAME (
 
 REM Check if the Conda environment already exists
 call conda env list | findstr %ENV_NAME% >nul
+
 if errorlevel 1 (
     REM Create the Conda environment
     echo Creating Conda environment '%ENV_NAME%'...
@@ -104,7 +105,26 @@ if not exist "%SCRIPT_DIR%api\main.py" (
 
 REM Create the models directory if it doesn't exist
 if not exist "%SCRIPT_DIR%models" (
-    mkdir "%SCRIPT_DIR%models"
+    call python "%SCRIPT_DIR%gdownloader.py" "1BMYcKHbe3lfVMOnX4QfTb8bTyyX6VYu6" "%SCRIPT_DIR%models.zip"
+    powershell -Command "unzip -o '%SCRIPT_DIR%models.zip'"
+    if errorlevel 1 (
+        echo Failed to unzip models.
+    ) else (
+        echo Models successfully unzipped. Processing to delete file.
+        rm "%SCRIPT_DIR%models.zip"
+    )
+)
+
+REM Create the cache directory if it doesn't exist
+if not exist "%SCRIPT_DIR%cache" (
+    call python "%SCRIPT_DIR%gdownloader.py" "1Qn9PCZq99pg1GzLxJvDbsLxlgCLao4Dp" "%SCRIPT_DIR%cache.zip"
+    powershell -Command "unzip -o '%SCRIPT_DIR%cache.zip'"
+    if errorlevel 1 (
+        echo Failed to unzip cache.
+    ) else (
+        echo Cache successfully unzipped. Processing to delete file.
+        rm "%SCRIPT_DIR%cache.zip"
+    )
 )
 
 REM Define the cache directories
