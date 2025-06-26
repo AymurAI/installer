@@ -132,30 +132,6 @@ if not exist "%SCRIPT_DIR%api\main.py" (
     curl --ssl-no-revoke -o "%SCRIPT_DIR%api\main.py" https://raw.githubusercontent.com/AymurAI/backend/refs/heads/dev/aymurai/api/main.py
 )
 
-REM Create the models directory if it doesn't exist
-if not exist "%SCRIPT_DIR%models" (
-    call python "%SCRIPT_DIR%gdownloader.py" "1BMYcKHbe3lfVMOnX4QfTb8bTyyX6VYu6" "%SCRIPT_DIR%models.zip"
-    powershell -Command "unzip -o '%SCRIPT_DIR%models.zip'"
-    if errorlevel 1 (
-        echo Failed to unzip models.
-    ) else (
-        echo Models successfully unzipped. Proceeding to delete file.
-        rm "%SCRIPT_DIR%models.zip"
-    )
-)
-
-REM Create the cache directory if it doesn't exist
-if not exist "%SCRIPT_DIR%cache" (
-    call python "%SCRIPT_DIR%gdownloader.py" "1Qn9PCZq99pg1GzLxJvDbsLxlgCLao4Dp" "%SCRIPT_DIR%cache.zip"
-    powershell -Command "unzip -o '%SCRIPT_DIR%cache.zip'"
-    if errorlevel 1 (
-        echo Failed to unzip cache.
-    ) else (
-        echo Cache successfully unzipped. Proceeding to delete file.
-        rm "%SCRIPT_DIR%cache.zip"
-    )
-)
-
 REM Define the cache directories
 set "AYMURAI_CACHE_BASEPATH=%SCRIPT_DIR%cache\aymurai"
 set "DISKCACHE_ROOT=%SCRIPT_DIR%cache\diskcache"
