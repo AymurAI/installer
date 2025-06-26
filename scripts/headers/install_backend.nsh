@@ -8,7 +8,7 @@
     SetOutPath $INSTDIR
 
     ; Copy installation files
-    File "${SOURCE_DIR}\aymurai-1.1.11-py3-none-any.whl"
+    File "${SOURCE_DIR}\aymurai-1.1.10-py3-none-any.whl"
     File "${SOURCE_DIR}\environment.yml"
     File "${SOURCE_DIR}\install.bat"
     File "${SOURCE_DIR}\run_server.bat"
@@ -29,7 +29,7 @@
 
     ; Remove installation files
     DetailPrint "Removing installation files..."
-    Delete "$INSTDIR\aymurai-1.1.11-py3-none-any.whl"
+    Delete "$INSTDIR\aymurai-1.1.10-py3-none-any.whl"
     Delete "$INSTDIR\install.bat"
 
     ; Write installation path to registry
