@@ -139,7 +139,7 @@ if not exist "%SCRIPT_DIR%models" (
     if errorlevel 1 (
         echo Failed to unzip models.
     ) else (
-        echo Models successfully unzipped. Processing to delete file.
+        echo Models successfully unzipped. Proceeding to delete file.
         rm "%SCRIPT_DIR%models.zip"
     )
 )
@@ -151,7 +151,7 @@ if not exist "%SCRIPT_DIR%cache" (
     if errorlevel 1 (
         echo Failed to unzip cache.
     ) else (
-        echo Cache successfully unzipped. Processing to delete file.
+        echo Cache successfully unzipped. Proceeding to delete file.
         rm "%SCRIPT_DIR%cache.zip"
     )
 )
