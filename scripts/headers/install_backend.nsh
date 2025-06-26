@@ -1,9 +1,9 @@
-; Back-End Installation Header
+; Backend Installation Header
 
 ; Define the source directory relative to the script directory
 !define SOURCE_DIR "..\resources"
 
-!macro InstallBackEnd
+!macro InstallBackend
     ; Set output path
     SetOutPath $INSTDIR
 
@@ -35,5 +35,5 @@
     ; Write installation path to registry
     WriteRegStr HKLM "Software\${APP_NAME}" "Install_Dir" "$INSTDIR"
 
-    DetailPrint "Back-End Installation successful."
+    DetailPrint "Backend installation successful."
 !macroend

@@ -39,13 +39,13 @@ UninstPage instfiles
 
 ;--------------------------------
 
-Section "Back-End"
-    ; Execute custom .nsh headers for back-end setup
+Section "Backend"
+    ; Execute custom .nsh headers for backend setup
     !insertmacro InstallBackend
 SectionEnd
 
-Section "Front-End"
-    ; Execute custom .nsh headers for front-end setup
+Section "Frontend"
+    ; Execute custom .nsh headers for frontend setup
     !insertmacro InstallFrontend
 SectionEnd
 

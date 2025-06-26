@@ -36,7 +36,7 @@ if not defined ENV_NAME (
     exit /b 1
 )
 REM Check if the Conda environment creation completed
-if not exist "%SCRIPT_DIR%full_env"  (
+if not exist "%SCRIPT_DIR%full_env" (
     REM Check if the Conda environment already exists
     call conda env list | findstr %ENV_NAME% >nul
     if errorlevel 1 (
