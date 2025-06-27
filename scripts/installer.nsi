@@ -1,7 +1,7 @@
 ; Main Installer Script
 
 !define APP_NAME "AymurAI"
-!define APP_VERSION "1.0"
+!define APP_VERSION "1.1"
 !define OUTPUT_DIR "..\build"
 
 ; Installer Information
