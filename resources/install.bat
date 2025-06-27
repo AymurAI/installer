@@ -106,6 +106,15 @@ if not exist "%SCRIPT_DIR%full_env" (
         call echo yes > "%SCRIPT_DIR%full_env"
     )
 ) else (
+    REM Check if the conda environment actually exists
+    call conda env list | findstr %ENV_NAME% >nul
+    if errorlevel 1 (
+        echo full_env file exists but conda environment '%ENV_NAME%' is missing. Recreating environment...
+        del "%SCRIPT_DIR%full_env"
+        REM Re-run this script to trigger environment creation
+        call "%~f0"
+        exit /b %ERRORLEVEL%
+    )
     echo Conda environment '%ENV_NAME%' already exists and is complete.
     REM Activate the environment
     call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
@@ -117,11 +126,19 @@ if not exist "%SCRIPT_DIR%api\resources\api" (
 )
 
 REM Move pipelines and static directories to the api directory
-if exist "%SCRIPT_DIR%pipelines" (
+if not exist "%SCRIPT_DIR%api\resources\pipelines" (
     move "%SCRIPT_DIR%pipelines" "%SCRIPT_DIR%api\resources\pipelines"
+) else (
+    if exist "%SCRIPT_DIR%pipelines" (
+        rmdir /s /q "%SCRIPT_DIR%pipelines"
+    )
 )
-if exist "%SCRIPT_DIR%static" (
+if not exist "%SCRIPT_DIR%api\resources\api\static" (
     move "%SCRIPT_DIR%static" "%SCRIPT_DIR%api\resources\api\static"
+) else (
+    if exist "%SCRIPT_DIR%static" (
+        rmdir /s /q "%SCRIPT_DIR%static"
+    )
 )
 
 REM Download the api module from the repository
@@ -143,7 +160,11 @@ set "RESOURCES_BASEPATH=%SCRIPT_DIR%api\resources"
 
 REM Run the api main.py file to download the models
 call python "%SCRIPT_DIR%api\main.py"
-
-REM Exit the script
-echo Backend dependencies installed successfully.
-exit /b 0
+if errorlevel 1 (
+    echo Error: Failed to run api\main.py. See above for details.
+    exit /b 1
+) else (
+    REM Exit the script
+    echo Backend dependencies installed successfully.
+    exit /b 0
+)
