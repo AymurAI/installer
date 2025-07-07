@@ -55,7 +55,7 @@ if not exist "%SCRIPT_DIR%full_env" (
         REM Activate the environment
         call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
         set "PIP_EXISTS_ACTION=w"
-        REM Update the conda enviroment
+        REM Update the conda environment
         call "%CONDA_DIR%\Scripts\conda.exe" env update -f "%SCRIPT_DIR%environment.yml"
         if errorlevel 1 (
             echo Conda environment update failed.
