@@ -16,7 +16,7 @@
 
     ; Run the installation batch file and capture the return code
     DetailPrint "Installing backend dependencies..."
-    nsExec::Exec '"$INSTDIR\install.bat" > "$INSTDIR\install.log" 2>&1"'
+    nsExec::Exec '"$INSTDIR\install.bat" > "$INSTDIR\install.log" 2>&1'
     Pop $1 ; return code
     ${If} $1 != 0
         MessageBox MB_ICONSTOP "Backend installation failed. Please check the installation log at $INSTDIR\install.log for details."
