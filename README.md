@@ -99,6 +99,7 @@ We welcome contributions to AymurAI! If you would like to contribute, feel free 
 ## Contributors
 - **Julián Ansaldo** - [@jansaldo](https://github.com/jansaldo) at [collective.ai](https://collectiveai.io) ([email](mailto:juli@collectiveai.io))
 - **Raúl Barriga** - [@jedzill4](https://github.com/jedzill4) at [collective.ai](https://collectiveai.io) ([email](mailto:r@collectiveai.io))
+- **Matías David Szlajen** - [@dblandit-git](https://github.com/dblandit-git) at [DBlandIT](https://dblandit.com/) ([email](mailto:mszlajen@dblandit.com))
 
 
 ## Citing AymurAI
