@@ -4,24 +4,15 @@ set "SCRIPT_DIR=%~dp0"
 
 REM Define Miniconda installation directory
 if not defined CONDA_DIR (
-    set "CONDA_DIR=%USERPROFILE%\Miniconda3"
+    set "CONDA_DIR=%USERPROFILE%\miniconda3"
 )
-
-REM Define Miniconda installer file path
-set "CONDA_INSTALLER=%SCRIPT_DIR%Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
 
 REM Check if Miniconda is already installed
 if exist "%CONDA_DIR%" (
     echo Miniconda is already installed.
 ) else (
-    REM Install Miniconda silently
-    echo Installing Miniconda...
-    call "%CONDA_INSTALLER%" /InstallationType=JustMe /AddToPath=0 /RegisterPython=0 /S /D=%CONDA_DIR%
-    if errorlevel 1 (
-        echo Miniconda installation failed.
-        exit /b 1
-    )
-    echo Miniconda installed.
+    echo Miniconda is not installed. Please install it first and try again.
+    exit /b 1
 )
 
 REM Update PATH environment variable for the current script
@@ -44,29 +35,67 @@ if not defined ENV_NAME (
     echo Environment name not found in environment.yml.
     exit /b 1
 )
-
-REM Check if the Conda environment already exists
-call conda env list | findstr %ENV_NAME% >nul
-if errorlevel 1 (
-    REM Create the Conda environment
-    echo Creating Conda environment '%ENV_NAME%'...
-    call "%CONDA_DIR%\Scripts\conda.exe" env create -f "%SCRIPT_DIR%environment.yml" -y
-    
-    REM Activate the environment
-    call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
+REM Check if the Conda environment creation completed
+if not exist "%SCRIPT_DIR%full_env" (
+    REM Check if the Conda environment already exists
+    call conda env list | findstr %ENV_NAME% >nul
+    if errorlevel 1 (
+        REM Create the Conda environment
+        echo Creating Conda environment '%ENV_NAME%'...
+        set "PIP_EXISTS_ACTION=w"
+        call "%CONDA_DIR%\Scripts\conda.exe" env create -f "%SCRIPT_DIR%environment.yml" -y
+        if errorlevel 1 (
+            echo Conda environment creation failed.
+            exit /b 1
+        )
+        REM Activate the environment
+        call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
+    ) else (
+        echo Updating Conda environment '%ENV_NAME%'...
+        REM Activate the environment
+        call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
+        set "PIP_EXISTS_ACTION=w"
+        REM Update the conda environment
+        call "%CONDA_DIR%\Scripts\conda.exe" env update -f "%SCRIPT_DIR%environment.yml"
+        if errorlevel 1 (
+            echo Conda environment update failed.
+            exit /b 1
+        )
+    )
     
     REM Workaround to fix python-magic issue
     REM https://github.com/ahupp/python-magic/issues/248
     call pip uninstall -y python-magic
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
+
     call pip install python-magic==0.4.27
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
     call pip install python-magic-bin==0.4.14
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
 
     REM Check if libmagic path is already in the PATH environment variable
     powershell -Command "if (-not $env:PATH.Contains('magic\libmagic')) { Write-Host 'libmagic path not found in PATH, adding it...'; $sitePackages = (Get-ChildItem -Path (Get-Command python).Source).Directory.Parent.FullName + '\aymurai-backend\Lib\site-packages'; $libmagicPath = Join-Path -Path $sitePackages -ChildPath 'magic\libmagic'; [System.Environment]::SetEnvironmentVariable('PATH', $env:PATH + ';' + $libmagicPath, [System.EnvironmentVariableTarget]::User); Write-Host 'libmagic path added to PATH.' } else { Write-Host 'libmagic path already exists in PATH.' }"
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
 
     REM Instal forked version of textract to fix this issue
     REM https://github.com/deanmalmgren/textract/issues/313
     call pip uninstall -y textract
+    if errorlevel 1 (
+        echo Conda environment creation failed.
+        exit /b 1
+    )
     call pip install "textract @ git+https://github.com/MaxEtMoritz/textract@master"
 
     if errorlevel 1 (
@@ -74,9 +103,19 @@ if errorlevel 1 (
         exit /b 1
     ) else (
         echo Conda environment '%ENV_NAME%' created successfully.
+        call echo yes > "%SCRIPT_DIR%full_env"
     )
 ) else (
-    echo Conda environment '%ENV_NAME%' already exists.
+    REM Check if the conda environment actually exists
+    call conda env list | findstr %ENV_NAME% >nul
+    if errorlevel 1 (
+        echo full_env file exists but conda environment '%ENV_NAME%' is missing. Recreating environment...
+        del "%SCRIPT_DIR%full_env"
+        REM Re-run this script to trigger environment creation
+        call "%~f0"
+        exit /b %ERRORLEVEL%
+    )
+    echo Conda environment '%ENV_NAME%' already exists and is complete.
     REM Activate the environment
     call "%CONDA_DIR%\Scripts\activate.bat" %ENV_NAME%
 )
@@ -87,11 +126,19 @@ if not exist "%SCRIPT_DIR%api\resources\api" (
 )
 
 REM Move pipelines and static directories to the api directory
-if exist "%SCRIPT_DIR%pipelines" (
+if not exist "%SCRIPT_DIR%api\resources\pipelines" (
     move "%SCRIPT_DIR%pipelines" "%SCRIPT_DIR%api\resources\pipelines"
+) else (
+    if exist "%SCRIPT_DIR%pipelines" (
+        rmdir /s /q "%SCRIPT_DIR%pipelines"
+    )
 )
-if exist "%SCRIPT_DIR%static" (
+if not exist "%SCRIPT_DIR%api\resources\api\static" (
     move "%SCRIPT_DIR%static" "%SCRIPT_DIR%api\resources\api\static"
+) else (
+    if exist "%SCRIPT_DIR%static" (
+        rmdir /s /q "%SCRIPT_DIR%static"
+    )
 )
 
 REM Download the api module from the repository
@@ -100,11 +147,6 @@ if not exist "%SCRIPT_DIR%api\__init__.py" (
 )
 if not exist "%SCRIPT_DIR%api\main.py" (
     curl --ssl-no-revoke -o "%SCRIPT_DIR%api\main.py" https://raw.githubusercontent.com/AymurAI/backend/refs/heads/dev/aymurai/api/main.py
-)
-
-REM Create the models directory if it doesn't exist
-if not exist "%SCRIPT_DIR%models" (
-    mkdir "%SCRIPT_DIR%models"
 )
 
 REM Define the cache directories
@@ -118,7 +160,11 @@ set "RESOURCES_BASEPATH=%SCRIPT_DIR%api\resources"
 
 REM Run the api main.py file to download the models
 call python "%SCRIPT_DIR%api\main.py"
-
-REM Exit the script
-echo Backend dependencies installed successfully.
-exit /b 0
+if errorlevel 1 (
+    echo Error: Failed to run api\main.py. See above for details.
+    exit /b 1
+) else (
+    REM Exit the script
+    echo Backend dependencies installed successfully.
+    exit /b 0
+)

@@ -1,30 +1,28 @@
-; Back-End Installation Header
+; Backend Installation Header
 
 ; Define the source directory relative to the script directory
 !define SOURCE_DIR "..\resources"
 
-!macro InstallBackEnd
+!macro InstallBackend
     ; Set output path
     SetOutPath $INSTDIR
 
     ; Copy installation files
-    File "${SOURCE_DIR}\Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
-    File "${SOURCE_DIR}\LibreOffice_25.2.2_Win_x86-64.msi"
-    File "${SOURCE_DIR}\aymurai-1.1.1-py3-none-any.whl"
+    File "${SOURCE_DIR}\aymurai-1.1.10-py3-none-any.whl"
     File "${SOURCE_DIR}\environment.yml"
     File "${SOURCE_DIR}\install.bat"
     File "${SOURCE_DIR}\run_server.bat"
     File /r "${SOURCE_DIR}\api\*.*"
 
-    ; Install LibreOffice silently in the installation directory
-    DetailPrint "Installing LibreOffice..."
-    nsExec::ExecToLog 'msiexec /i "$INSTDIR\LibreOffice_25.2.2_Win_x86-64.msi" /qn'
-    DetailPrint "LibreOffice installation completed."
-
-    ; Run the installation batch file
+    ; Run the installation batch file and capture the return code
     DetailPrint "Installing backend dependencies..."
-    nsExec::ExecToLog '"$INSTDIR\install.bat"'
-    
+    nsExec::Exec '"$INSTDIR\install.bat" > "$INSTDIR\install.log" 2>&1'
+    Pop $1 ; return code
+    ${If} $1 != 0
+        MessageBox MB_ICONSTOP "Backend installation failed. Please check the installation log at $INSTDIR\install.log for details."
+        Abort
+    ${EndIf}
+
     ; Add 'es-AR' locale and set 'en-US' as default
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-WinSystemLocale"'
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-WinSystemLocale -SystemLocale \"en-US\""'
@@ -36,13 +34,12 @@
 
     ; Remove installation files
     DetailPrint "Removing installation files..."
-    Delete "$INSTDIR\Miniconda3-py312_24.7.1-0-Windows-x86_64.exe"
-    Delete "$INSTDIR\LibreOffice_25.2.2_Win_x86-64.msi"
-    Delete "$INSTDIR\aymurai-1.1.1-py3-none-any.whl"
+    Delete "$INSTDIR\aymurai-1.1.10-py3-none-any.whl"
     Delete "$INSTDIR\install.bat"
 
     ; Write installation path to registry
     WriteRegStr HKLM "Software\${APP_NAME}" "Install_Dir" "$INSTDIR"
 
-    DetailPrint "Back-End Installation successful."
+    DetailPrint "Backend installation successful."
+    Delete "$INSTDIR\install.log"
 !macroend

@@ -1,13 +1,13 @@
-; Front-End Installation Header
+; Frontend Installation Header
 
-!define FRONTEND_URL "https://github.com/AymurAI/desktop-app/releases/download/1.13.0/AymurAI-V.1.13.0.zip"
+!define FRONTEND_URL "https://github.com/AymurAI/desktop-app/releases/download/1.20.2/AymurAI-win32-x64-1-20-2.zip"
 
 !macro InstallFrontend
-    ; Check if front-end is already installed
+    ; Check if frontend is already installed
     IfFileExists "$INSTDIR\${APP_NAME}.exe" frontend_skip_download frontend_download
 
     frontend_skip_download:
-        DetailPrint "Front-end is already installed."
+        DetailPrint "Frontend is already installed."
         Goto finish
 
     frontend_download:
@@ -15,11 +15,11 @@
         SetOutPath $INSTDIR
 
         ; Download ZIP from GitHub
-        DetailPrint "Downloading front-end..."
+        DetailPrint "Downloading frontend..."
         nsExec::ExecToLog 'powershell -Command "Invoke-WebRequest -Uri ${FRONTEND_URL} -OutFile \"$INSTDIR\${APP_NAME}.zip\""'
         
         ; Unzip downloaded file
-        DetailPrint "Extracting front-end..."
+        DetailPrint "Extracting frontend..."
         nsExec::ExecToLog 'powershell -Command "Expand-Archive -Path \"$INSTDIR\${APP_NAME}.zip\" -DestinationPath \"$INSTDIR\" -Force"'
         
         ; Remove ZIP file after extraction
@@ -52,11 +52,11 @@
         IfFileExists "$INSTDIR\${APP_NAME}.exe" frontend_success frontend_fail
 
         frontend_fail:
-            MessageBox MB_OK|MB_ICONEXCLAMATION "Front-End Installation failed. Please try again."
+            MessageBox MB_OK|MB_ICONEXCLAMATION "Frontend installation failed. Please try again."
             Abort
         
         frontend_success:
-            DetailPrint "Front-End Installation successful."
+            DetailPrint "Frontend installation successful."
         
     finish:
         ; No further actions needed here

@@ -1,7 +1,7 @@
 ; Main Installer Script
 
 !define APP_NAME "AymurAI"
-!define APP_VERSION "1.0"
+!define APP_VERSION "1.1"
 !define OUTPUT_DIR "..\build"
 
 ; Installer Information
@@ -39,13 +39,13 @@ UninstPage instfiles
 
 ;--------------------------------
 
-Section "Back-End"
-    ; Execute custom .nsh headers for back-end setup
+Section "Backend"
+    ; Execute custom .nsh headers for backend setup
     !insertmacro InstallBackend
 SectionEnd
 
-Section "Front-End"
-    ; Execute custom .nsh headers for front-end setup
+Section "Frontend"
+    ; Execute custom .nsh headers for frontend setup
     !insertmacro InstallFrontend
 SectionEnd
 

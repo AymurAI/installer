@@ -25,19 +25,6 @@
     end_miniconda:
         ; Continue with the uninstallation process
 
-    ; Prompt user to uninstall LibreOffice
-    MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to uninstall LibreOffice?" IDYES uninstall_libreoffice IDNO skip_libreoffice
-
-    uninstall_libreoffice:
-        ; Uninstall LibreOffice
-        DetailPrint "Uninstalling LibreOffice..."
-        ; NOTE: The GUID is unique to the installed version of LibreOffice
-        nsExec::ExecToLog 'msiexec /x "{632F6BB4-FB41-4870-9EA9-346A347CABA6}" /qn /norestart'
-        DetailPrint "LibreOffice uninstallation complete."
-    
-    skip_libreoffice:
-        ; Continue with the uninstallation process
-    
     ; Remove registry keys
     DeleteRegKey HKLM "Software\${APP_NAME}"
     
