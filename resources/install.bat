@@ -43,6 +43,9 @@ if not exist "%SCRIPT_DIR%full_env" (
         REM Create the Conda environment
         echo Creating Conda environment '%ENV_NAME%'...
         set "PIP_EXISTS_ACTION=w"
+        REM Set the CONDA_PLUGINS_AUTO_ACCEPT_TOS variable to yes to avoid TOS prompts
+        REM https://github.com/scikit-learn/scikit-learn/issues/31773#issuecomment-3085583618
+        set "CONDA_PLUGINS_AUTO_ACCEPT_TOS=yes"
         call "%CONDA_DIR%\Scripts\conda.exe" env create -f "%SCRIPT_DIR%environment.yml" -y
         if errorlevel 1 (
             echo Conda environment creation failed.
