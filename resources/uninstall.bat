@@ -13,16 +13,19 @@ for /f "tokens=2 delims=: " %%a in ('findstr /i "name:" "%SCRIPT_DIR%environment
 echo Removing Conda environment '%ENV_NAME%'...
 
 REM Remove the Conda environment
-call "%CONDA_DIR%\Scripts\conda.exe" remove -n %ENV_NAME% --all -y || (
+call "%CONDA_DIR%\Scripts\conda.exe" remove -n %ENV_NAME% --all -y
+if errorlevel 1 (
     echo Failed to remove Conda environment.
+    exit /b 1
+) else (
+    echo Conda environment '%ENV_NAME%' removed.
 )
-echo Conda environment '%ENV_NAME%' removed.
 
 REM Check if Miniconda should be uninstalled
 if "%UNINSTALL_MINICONDA%" == "true" (
     REM Uninstall Miniconda
     echo Uninstalling Miniconda...
-    call "%CONDA_DIR%\Uninstall-Miniconda3.exe" /S    
+    call "%CONDA_DIR%\Uninstall-Miniconda3.exe" /S
     echo Miniconda uninstallation complete.
 ) else (
     echo Miniconda will not be uninstalled.
