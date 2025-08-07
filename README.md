@@ -30,8 +30,11 @@ The repository structure is as follows:
 │   │   └── static
 │   │       └── logo256-text.ico
 │   ├── aymurai-<VERSION>-py3-none-any.whl
+│   ├── banner.bmp
 │   ├── environment.yml
+│   ├── header.bmp
 │   ├── install.bat
+│   ├── license.txt
 │   ├── run_server.bat
 │   └── uninstall.bat
 └── scripts
