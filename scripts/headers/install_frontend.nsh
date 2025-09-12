@@ -1,7 +1,6 @@
 ; Frontend Installation Header
 
 !define FRONTEND_URL "https://github.com/AymurAI/desktop-app/releases/download/1.20.2/AymurAI-win32-x64-1-20-2.zip"
-!define ARCHIVO_FONT "..\resources\Archivo-Regular.ttf"
 
 !macro InstallFrontend
     ; Check if frontend is already installed
@@ -9,7 +8,7 @@
 
     frontend_skip_download:
         DetailPrint "Frontend is already installed."
-        Goto install_archivo_font
+        Goto finish
 
     frontend_download:
         ; Set output path
@@ -58,29 +57,6 @@
         
         frontend_success:
             DetailPrint "Frontend installation successful."
-
-    install_archivo_font:
-        ; Check if any Archivo font already exists in Windows Fonts
-        nsExec::ExecToStack 'powershell -NoProfile -ExecutionPolicy Bypass -Command "$props = (Get-ItemProperty -Path \"HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts\").PSObject.Properties.Name | Where-Object { $_ -like \"Archivo*\" }; if ($props) { exit 0 } else { exit 1 }"'
-        Pop $0
-        StrCmp $0 "0" finish archivo_font_install
-
-        archivo_font_install:
-            ; Copy Archivo font file
-            DetailPrint "Installing Archivo font..."
-            SetOutPath $INSTDIR
-            File "${ARCHIVO_FONT}"
-
-            ; Copy Archivo font file to Windows Fonts
-            nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Copy-Item -Path \"$INSTDIR\Archivo-Regular.ttf\" -Destination \"C:\Windows\Fonts\" -Force"'
-            
-            ; Add registry entry for the font
-            nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "New-ItemProperty -Path \"HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts\" -Name \"Archivo (TrueType)\" -PropertyType String -Value \"Archivo-Regular.ttf\" -Force"'
-            DetailPrint "Archivo font installed successfully."
-            
-            ; Remove Archivo font file
-            DetailPrint "Removing temporary Archivo font file..."
-            Delete "$INSTDIR\Archivo-Regular.ttf"
 
     finish:
         ; No further actions needed here
