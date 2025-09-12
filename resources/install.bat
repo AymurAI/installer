@@ -66,32 +66,6 @@ if not exist "%SCRIPT_DIR%full_env" (
         )
     )
     
-    REM Workaround to fix python-magic issue
-    REM https://github.com/ahupp/python-magic/issues/248
-    call pip uninstall -y python-magic
-    if errorlevel 1 (
-        echo Conda environment creation failed.
-        exit /b 1
-    )
-
-    call pip install python-magic==0.4.27
-    if errorlevel 1 (
-        echo Conda environment creation failed.
-        exit /b 1
-    )
-    call pip install python-magic-bin==0.4.14
-    if errorlevel 1 (
-        echo Conda environment creation failed.
-        exit /b 1
-    )
-
-    REM Check if libmagic path is already in the PATH environment variable
-    powershell -Command "if (-not $env:PATH.Contains('magic\libmagic')) { Write-Host 'libmagic path not found in PATH, adding it...'; $sitePackages = (Get-ChildItem -Path (Get-Command python).Source).Directory.Parent.FullName + '\aymurai-backend\Lib\site-packages'; $libmagicPath = Join-Path -Path $sitePackages -ChildPath 'magic\libmagic'; [System.Environment]::SetEnvironmentVariable('PATH', $env:PATH + ';' + $libmagicPath, [System.EnvironmentVariableTarget]::User); Write-Host 'libmagic path added to PATH.' } else { Write-Host 'libmagic path already exists in PATH.' }"
-    if errorlevel 1 (
-        echo Conda environment creation failed.
-        exit /b 1
-    )
-
     REM Instal forked version of textract to fix this issue
     REM https://github.com/deanmalmgren/textract/issues/313
     call pip uninstall -y textract
