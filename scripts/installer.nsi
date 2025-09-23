@@ -9,7 +9,7 @@ ManifestDPIAware true
 ; Installer Information
 Name "${APP_NAME} v${APP_VERSION}"
 OutFile "${OUTPUT_DIR}\${APP_NAME}-Installer.exe"
-BrandingText "DataGenero - Collective AI"
+BrandingText "DataGénero - Collective AI"
 
 ; Request application privileges
 RequestExecutionLevel admin
@@ -39,11 +39,10 @@ InstallDirRegKey HKLM "Software\${APP_NAME}" "Install_Dir"
 !define MUI_WELCOMEPAGE_TEXT "This setup will guide you through the installation of ${APP_NAME} on your system.$\r$\n$\r$\nIt is recommended that you close all other applications before starting.$\r$\n$\r$\nMake sure you have LibreOffice and Miniconda installed on your system, as they are required for ${APP_NAME} to function properly.$\r$\n$\r$\nClick Next to continue."
 
 !define MUI_HEADERIMAGE
-!define MUI_PAGE_HEADER_TEXT "License Information"
-!define MUI_PAGE_HEADER_SUBTEXT "Please review the license terms before installing ${APP_NAME}."
-!define MUI_LICENSEPAGE_TEXT_TOP "Press Page Down or scroll to see the rest of the license."
+!define MUI_PAGE_HEADER_TEXT "Terms and Conditions"
+!define MUI_PAGE_HEADER_SUBTEXT "Please review the terms and conditions before installing ${APP_NAME}."
+!define MUI_LICENSEPAGE_TEXT_TOP "Press Page Down or scroll to see the rest of the terms and conditions."
 !define MUI_LICENSEPAGE_TEXT_BOTTOM " "
-!define MUI_LICENSEPAGE_BUTTON "&Next >"
 
 !define MUI_ABORTWARNING
 !define MUI_FINISHPAGE_TITLE "Setup Complete"
@@ -73,7 +72,7 @@ Var MinicondaCheckbox
 
 ; Modern UI pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "..\resources\license.txt"
+!insertmacro MUI_PAGE_LICENSE "..\resources\terms_and_conditions.txt"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES

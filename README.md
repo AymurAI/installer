@@ -34,7 +34,7 @@ The repository structure is as follows:
 │   ├── environment.yml
 │   ├── header.bmp
 │   ├── install.bat
-│   ├── license.txt
+│   ├── terms_and_conditions.txt
 │   ├── run_server.bat
 │   └── uninstall.bat
 └── scripts
@@ -89,7 +89,7 @@ If you are working in the development container, you can compile the installer u
 
 ```bash
 # Compile the installer
-wine ~/.wine/drive_c/Program\ Files/NSIS/makensis.exe -- scripts/installer.nsi
+wine ~/.wine/drive_c/Program\ Files/NSIS/makensis.exe /INPUTCHARSET UTF8 scripts/installer.nsi
 ```
 
 The installer executable will be created in the `build` directory.
