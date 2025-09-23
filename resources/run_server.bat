@@ -32,6 +32,9 @@ set "FLAIR_CACHE_ROOT=%AYMURAI_DATA_DIR%\models\flair"
 set "TFHUB_CACHE_DIR=%AYMURAI_DATA_DIR%\models\tfhub"
 set "AYMURAI_SQLITE_DIR=%AYMURAI_DATA_DIR%\data\sqlite"
 set "AYMURAI_DATABASE_FILE=%AYMURAI_SQLITE_DIR%\database.db"
+set "AYMURAI_LOG_DIR=%AYMURAI_DATA_DIR%\logs"
+set "AYMURAI_LOG_FILE=%AYMURAI_LOG_DIR%\backend.log"
+set "AYMURAI_TRAY_ICON=%SCRIPT_DIR%\api\resources\api\static\logo256-text.ico"
 
 for %%D in (
     "%AYMURAI_DATA_DIR%"
@@ -43,6 +46,7 @@ for %%D in (
     "%TFHUB_CACHE_DIR%"
     "%AYMURAI_DATA_DIR%\data"
     "%AYMURAI_SQLITE_DIR%"
+    "%AYMURAI_LOG_DIR%"
 ) do (
     if not exist "%%~D" mkdir "%%~D"
 )
@@ -52,5 +56,5 @@ set "RESOURCES_BASEPATH=%SCRIPT_DIR%api\resources"
 set "SQLALCHEMY_DATABASE_URI=sqlite:///%AYMURAI_DATABASE_FILE:\=/%%"
 set "LIBREOFFICE_BIN=C:\Program Files\LibreOffice\program\soffice.exe"
 
-REM Run the application
-call python -m uvicorn --app-dir=api main:api --reload --host=0.0.0.0 --port=8899
+REM Run the tray launcher that manages the backend process
+call python "%SCRIPT_DIR%tray_runner.py"

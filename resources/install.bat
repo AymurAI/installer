@@ -140,6 +140,8 @@ set "FLAIR_CACHE_ROOT=%AYMURAI_DATA_DIR%\models\flair"
 set "TFHUB_CACHE_DIR=%AYMURAI_DATA_DIR%\models\tfhub"
 set "AYMURAI_SQLITE_DIR=%AYMURAI_DATA_DIR%\data\sqlite"
 set "AYMURAI_DATABASE_FILE=%AYMURAI_SQLITE_DIR%\database.db"
+set "AYMURAI_LOG_DIR=%AYMURAI_DATA_DIR%\logs"
+set "AYMURAI_LOG_FILE=%AYMURAI_LOG_DIR%\backend.log"
 
 for %%D in (
     "%AYMURAI_DATA_DIR%"
@@ -151,6 +153,7 @@ for %%D in (
     "%TFHUB_CACHE_DIR%"
     "%AYMURAI_DATA_DIR%\data"
     "%AYMURAI_SQLITE_DIR%"
+    "%AYMURAI_LOG_DIR%"
 ) do (
     if not exist "%%~D" mkdir "%%~D"
 )

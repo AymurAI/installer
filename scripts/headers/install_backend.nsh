@@ -12,6 +12,7 @@
     File "${SOURCE_DIR}\environment.yml"
     File "${SOURCE_DIR}\install.bat"
     File "${SOURCE_DIR}\run_server.bat"
+    File "${SOURCE_DIR}\tray_runner.py"
     File /r "${SOURCE_DIR}\api\*.*"
 
     ; Run the installation batch file and capture the return code
