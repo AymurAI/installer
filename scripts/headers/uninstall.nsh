@@ -20,6 +20,19 @@
     ; Remove registry keys
     DeleteRegKey HKLM "Software\${APP_NAME}"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
+
+    ; Remove per-user data directory if requested
+    ${If} $UNINSTALL_APPDATA = 1
+        StrCpy $0 "$LOCALAPPDATA\${APP_NAME}"
+        StrCpy $1 0
+        IfFileExists "$0\\*.*" 0 +2
+            StrCpy $1 1
+        IfFileExists "$0\\" 0 +2
+            StrCpy $1 1
+        StrCmp $1 1 0 +3
+            DetailPrint "Removing user data directory..."
+            RMDir /r /REBOOTOK "$0"
+    ${EndIf}
     
     ; Remove installation directory and all its contents, including subdirectories
     RMDir /r /REBOOTOK "$INSTDIR"

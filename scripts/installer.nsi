@@ -67,6 +67,8 @@ FunctionEnd
 
 Var UNINSTALL_MINICONDA
 Var MinicondaCheckbox
+Var UNINSTALL_APPDATA
+Var RemoveDataCheckbox
 
 ;--------------------------------
 
@@ -188,9 +190,15 @@ Function un.MinicondaPageCreate
     Pop $MinicondaCheckbox
     ${NSD_SetState} $MinicondaCheckbox ${BST_UNCHECKED}
     ${NSD_CreateLabel} 0u 36u 100% 24u "Warning: Only check this if you are sure no other Conda environments are needed. This will remove Miniconda and all its environments."
+    
+    ${NSD_CreateCheckbox} 0u 68u 100% 12u "Remove AymurAI data (cache, models, database)"
+    Pop $RemoveDataCheckbox
+    ${NSD_SetState} $RemoveDataCheckbox ${BST_UNCHECKED}
+    ${NSD_CreateLabel} 0u 84u 100% 24u "Deletes files under $LOCALAPPDATA\AymurAI for this user."
     nsDialogs::Show
 FunctionEnd
 
 Function un.MinicondaPageLeave
     ${NSD_GetState} $MinicondaCheckbox $UNINSTALL_MINICONDA
+    ${NSD_GetState} $RemoveDataCheckbox $UNINSTALL_APPDATA
 FunctionEnd
