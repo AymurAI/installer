@@ -16,11 +16,11 @@
     File /r "${SOURCE_DIR}\api\*.*"
 
     ; Run the installation batch file and capture the return code
-    DetailPrint "Installing backend dependencies..."
+    DetailPrint "$(STR_DETAIL_BACKEND_INSTALL)"
     nsExec::Exec '"$INSTDIR\install.bat" > "$INSTDIR\install.log" 2>&1'
     Pop $1 ; return code
     ${If} $1 != 0
-        MessageBox MB_ICONSTOP "Backend installation failed. Please check the installation log at $INSTDIR\install.log for details."
+        MessageBox MB_ICONSTOP "$(STR_DETAIL_BACKEND_FAIL)"
         Abort
     ${EndIf}
 
@@ -29,18 +29,18 @@
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-WinSystemLocale -SystemLocale \"en-US\""'
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-WinUILanguageOverride -Language \"es-AR\""'
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-WinUserLanguageList \"es-AR\" -Force"'
-    nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "$env:LANG = \"en-US.UTF-8\"; $env:LC_ALL = \"en-US.UTF-8\""'
+    nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "$$env:LANG = \"en-US.UTF-8\"; $$env:LC_ALL = \"en-US.UTF-8\""'
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-WinUserLanguageList"'
     nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-Culture"'
 
     ; Remove installation files
-    DetailPrint "Removing installation files..."
+    DetailPrint "$(STR_DETAIL_BACKEND_REMOVE)"
     Delete "$INSTDIR\aymurai-1.1.12-py3-none-any.whl"
     Delete "$INSTDIR\install.bat"
 
     ; Write installation path to registry
     WriteRegStr HKLM "Software\${APP_NAME}" "Install_Dir" "$INSTDIR"
 
-    DetailPrint "Backend installation successful."
+    DetailPrint "$(STR_DETAIL_BACKEND_SUCCESS)"
     Delete "$INSTDIR\install.log"
 !macroend

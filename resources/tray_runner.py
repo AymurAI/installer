@@ -35,6 +35,51 @@ ICON_PATH = Path(
     )
 )
 
+DEFAULT_LANGUAGE = "es"
+REGISTRY_PATH = r"Software\AymurAI\Installer"
+REGISTRY_VALUE = "Language"
+
+LANGUAGE_ALIASES = {
+    "en": "en",
+    "english": "en",
+    "1033": "en",
+    "es": "es",
+    "spa": "es",
+    "spanish": "es",
+    "1034": "es",
+    "3082": "es",
+}
+
+LANGUAGE_STRINGS = {
+    "tray_title_template": {
+        "en": "AymurAI Backend ({status})",
+        "es": "Backend de AymurAI ({status})",
+    },
+    "status_starting": {"en": "Starting", "es": "Iniciando"},
+    "status_running": {"en": "Running", "es": "En ejecución"},
+    "status_stopped": {"en": "Stopped", "es": "Detenido"},
+    "notify_title": {"en": "AymurAI Backend", "es": "Backend de AymurAI"},
+    "notify_restarted": {
+        "en": "AymurAI backend restarted",
+        "es": "El backend de AymurAI se reinicio",
+    },
+    "notify_unexpected_stop": {
+        "en": "AymurAI backend stopped. Use the tray icon to restart it.",
+        "es": "El backend de AymurAI se detuvo. Usa el icono de la bandeja para reiniciarlo.",
+    },
+    "menu_open_log": {"en": "Open log", "es": "Abrir log"},
+    "menu_open_logs_folder": {
+        "en": "Open log folder",
+        "es": "Abrir carpeta de logs",
+    },
+    "menu_restart_backend": {
+        "en": "Start / Restart backend",
+        "es": "Iniciar / reiniciar backend",
+    },
+    "menu_stop_backend": {"en": "Stop backend", "es": "Detener backend"},
+    "menu_quit": {"en": "Quit", "es": "Salir"},
+}
+
 BACKEND_COMMAND = [
     sys.executable,
     "-m",
@@ -49,11 +94,85 @@ CREATE_NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000)
 CREATE_NEW_PROCESS_GROUP = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200)
 
 
+def _normalise_language(value: str | int | None) -> str:
+    """
+    Map registry or environment values to supported language codes.
+
+    Args:
+        value (str | int | None): The raw language value from environment or registry.
+
+    Returns:
+        str: The normalized language code ('en' or 'es'), or default if unrecognized.
+    """
+    if value is None:
+        return DEFAULT_LANGUAGE
+
+    if isinstance(value, int):
+        return LANGUAGE_ALIASES.get(str(value), DEFAULT_LANGUAGE)
+
+    token = value.strip().lower()
+    return LANGUAGE_ALIASES.get(token, DEFAULT_LANGUAGE)
+
+
+def detect_language() -> str:
+    """Determine the UI language based on environment or registry settings."""
+
+    env_lang = os.environ.get("AYMURAI_LANG")
+    if env_lang:
+        return _normalise_language(env_lang)
+
+    if os.name == "nt":
+        try:
+            import winreg  # type: ignore
+
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, REGISTRY_PATH) as key:
+                raw_value, _ = winreg.QueryValueEx(key, REGISTRY_VALUE)
+        except FileNotFoundError:
+            return DEFAULT_LANGUAGE
+        except OSError:
+            return DEFAULT_LANGUAGE
+        else:
+            return _normalise_language(raw_value)
+
+    return DEFAULT_LANGUAGE
+
+
+class Localizer:
+    """Provide language-specific strings with graceful fallback."""
+
+    def __init__(self, language: str) -> None:
+        self.language = language if language in {"en", "es"} else DEFAULT_LANGUAGE
+
+    def get(self, key: str, **kwargs: object) -> str:
+        """
+        Retrieve a localized string by key, formatting with kwargs if provided.
+
+        Args:
+            key (str): The key identifying the string to retrieve.
+            **kwargs (object): Optional keyword arguments for string formatting.
+
+        Returns:
+            str: The localized and formatted string.
+        """
+        options = LANGUAGE_STRINGS.get(key, {})
+        text = (
+            options.get(self.language)
+            or options.get(DEFAULT_LANGUAGE)
+            or options.get("en")
+            or key
+        )
+        if kwargs:
+            with contextlib.suppress(Exception):
+                return text.format(**kwargs)
+        return text
+
+
 class TrayApp:
     """Manage the backend process and accompanying system tray icon."""
 
-    def __init__(self) -> None:
+    def __init__(self, localizer: Localizer) -> None:
         """Initialize the TrayApp, setting up process management, logging, and tray icon image."""
+        self.localize = localizer
         self.process: subprocess.Popen[str] | None = None
         self.log_handle: TextIO | None = None
         self.lock = threading.Lock()
@@ -97,7 +216,12 @@ class TrayApp:
         self.log_handle = None
 
     def _write_log(self, message: str) -> None:
-        """Write a timestamped message to the log file."""
+        """
+        Write a timestamped message to the log file.
+
+        Args:
+            message (str): The message to log.
+        """
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
         line = f"[{timestamp}] {message}\n"
         if self.log_handle is not None:
@@ -133,10 +257,16 @@ class TrayApp:
             if not self.monitor_thread.is_alive():
                 self.monitor_thread.start()
 
-        self._update_icon_title("Running")
+        self._update_icon_title("running")
 
     def stop_backend(self, reason: str = "Stopped by user") -> None:
-        """Stop the backend process gracefully and update status/logs."""
+        """
+        Stop the backend process gracefully and update status/logs.
+
+        Args:
+            reason (str): The reason for stopping the backend, for logging purposes.
+                Default is "Stopped by user".
+        """
         with self.lock:
             proc = self.process
             if proc is None:
@@ -150,14 +280,14 @@ class TrayApp:
             self.process = None
             self._close_log()
 
-        self._update_icon_title("Stopped")
+        self._update_icon_title("stopped")
 
     def restart_backend(self) -> None:
         """Restart the backend process and notify the user."""
         self.stop_backend("Restart requested")
         time.sleep(0.5)
         self.start_backend()
-        self._notify("AymurAI backend restarted")
+        self._notify(self.localize.get("notify_restarted"))
 
     def open_log_file(self) -> None:
         """Open the backend log file in the system's file explorer."""
@@ -195,19 +325,44 @@ class TrayApp:
                 self.process = None
                 self._close_log()
 
-            self._update_icon_title("Stopped")
-            self._notify("AymurAI backend stopped. Use the tray icon to restart it.")
+            self._update_icon_title("stopped")
+            self._notify(self.localize.get("notify_unexpected_stop"))
 
-    def _update_icon_title(self, status: str) -> None:
-        """Update the tray icon's title to reflect backend status."""
+    def _update_icon_title(self, status_key: str) -> None:
+        """
+        Update the tray icon's title to reflect backend status.
+
+        Args:
+            status_key (str): The status key to localize.
+        """
         if self.icon is not None:
-            self.icon.title = f"AymurAI Backend ({status})"
+            title = self._format_title(status_key)
+            self.icon.title = title
+
+    def _format_title(self, status_key: str) -> str:
+        """
+        Format the tray icon title based on the current status.
+
+        Args:
+            status_key (str): The status key to localize.
+
+        Returns:
+            str: The formatted title string.
+        """
+        status_text = self.localize.get(f"status_{status_key}")
+        template = self.localize.get("tray_title_template")
+        return template.format(status=status_text)
 
     def _notify(self, message: str) -> None:
-        """Show a notification message via the tray icon."""
+        """
+        Show a notification message via the tray icon.
+
+        Args:
+            message (str): The message to display in the notification.
+        """
         if self.icon is not None:
             with contextlib.suppress(Exception):
-                self.icon.notify(message, "AymurAI Backend")
+                self.icon.notify(message, self.localize.get("notify_title"))
 
 
 def _open_in_explorer(path: Path) -> None:
@@ -308,18 +463,33 @@ def _setup_signal_handlers(app: TrayApp, icon: pystray.Icon) -> None:
 
 def main() -> None:
     """Main entry point for the tray runner application."""
-    app = TrayApp()
+    language = detect_language()
+    localizer = Localizer(language)
+    app = TrayApp(localizer)
 
     menu = Menu(
-        MenuItem("Open log", lambda _icon, _item: app.open_log_file()),
-        MenuItem("Open log folder", lambda _icon, _item: app.open_logs_folder()),
-        MenuItem("Start / Restart backend", lambda _icon, _item: app.restart_backend()),
-        MenuItem("Stop backend", lambda _icon, _item: app.stop_backend()),
+        MenuItem(
+            localizer.get("menu_open_log"),
+            lambda _icon, _item: app.open_log_file(),
+        ),
+        MenuItem(
+            localizer.get("menu_open_logs_folder"),
+            lambda _icon, _item: app.open_logs_folder(),
+        ),
+        MenuItem(
+            localizer.get("menu_restart_backend"),
+            lambda _icon, _item: app.restart_backend(),
+        ),
+        MenuItem(
+            localizer.get("menu_stop_backend"),
+            lambda _icon, _item: app.stop_backend(),
+        ),
         Menu.SEPARATOR,
-        MenuItem("Quit", lambda icon, _item: _quit(icon, app)),
+        MenuItem(localizer.get("menu_quit"), lambda icon, _item: _quit(icon, app)),
     )
 
-    icon = pystray.Icon("aymurai-backend", app.image, "AymurAI Backend", menu)
+    initial_title = app._format_title("starting")
+    icon = pystray.Icon("aymurai-backend", app.image, initial_title, menu)
     app.icon = icon
     _setup_signal_handlers(app, icon)
 

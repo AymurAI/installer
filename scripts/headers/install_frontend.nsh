@@ -7,7 +7,7 @@
     IfFileExists "$INSTDIR\${APP_NAME}.exe" frontend_skip_download frontend_download
 
     frontend_skip_download:
-        DetailPrint "Frontend is already installed."
+        DetailPrint "$(STR_DETAIL_FRONTEND_SKIP)"
         Goto finish
 
     frontend_download:
@@ -15,11 +15,11 @@
         SetOutPath $INSTDIR
 
         ; Download ZIP from GitHub
-        DetailPrint "Downloading frontend..."
+        DetailPrint "$(STR_DETAIL_FRONTEND_DOWNLOAD)"
         nsExec::ExecToLog 'powershell -Command "Invoke-WebRequest -Uri ${FRONTEND_URL} -OutFile \"$INSTDIR\${APP_NAME}.zip\""'
         
         ; Unzip downloaded file
-        DetailPrint "Extracting frontend..."
+        DetailPrint "$(STR_DETAIL_FRONTEND_EXTRACT)"
         nsExec::ExecToLog 'powershell -Command "Expand-Archive -Path \"$INSTDIR\${APP_NAME}.zip\" -DestinationPath \"$INSTDIR\" -Force"'
         
         ; Remove ZIP file after extraction
@@ -52,11 +52,11 @@
         IfFileExists "$INSTDIR\${APP_NAME}.exe" frontend_success frontend_fail
 
         frontend_fail:
-            MessageBox MB_OK|MB_ICONEXCLAMATION "Frontend installation failed. Please try again."
+            MessageBox MB_OK|MB_ICONEXCLAMATION "$(STR_DETAIL_FRONTEND_FAIL)"
             Abort
-        
+
         frontend_success:
-            DetailPrint "Frontend installation successful."
+            DetailPrint "$(STR_DETAIL_FRONTEND_SUCCESS)"
 
     finish:
         ; No further actions needed here
