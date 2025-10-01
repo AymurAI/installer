@@ -17,25 +17,27 @@ The repository structure is as follows:
 ├── .devcontainer
 │   ├── devcontainer.json
 │   └── Dockerfile
+├── .gitignore
 ├── LICENSE.md
 ├── README.md
 ├── resources
 │   ├── api
-│   │   ├── pipelines
-│   │   │   └── production
-│   │   │       ├── flair-anonymizer
-│   │   │       │   └── pipeline.json
-│   │   │       └── full-paragraph
-│   │   │           └── pipeline.json
-│   │   └── static
-│   │       └── logo256-text.ico
+│   │   └── pipelines
+│   │       └── production
+│   │           ├── flair-anonymizer
+│   │           │   └── pipeline.json
+│   │           └── full-paragraph
+│   │               └── pipeline.json
 │   ├── aymurai-<VERSION>-py3-none-any.whl
 │   ├── banner.bmp
 │   ├── environment.yml
+│   ├── favicon.ico
 │   ├── header.bmp
 │   ├── install.bat
-│   ├── terms_and_conditions.txt
 │   ├── run_server.bat
+│   ├── terms_and_conditions_es.txt
+│   ├── terms_and_conditions.txt
+│   ├── tray_runner.py
 │   └── uninstall.bat
 └── scripts
     ├── headers
