@@ -17,25 +17,27 @@ The repository structure is as follows:
 ├── .devcontainer
 │   ├── devcontainer.json
 │   └── Dockerfile
+├── .gitignore
 ├── LICENSE.md
 ├── README.md
 ├── resources
 │   ├── api
-│   │   ├── pipelines
-│   │   │   └── production
-│   │   │       ├── flair-anonymizer
-│   │   │       │   └── pipeline.json
-│   │   │       └── full-paragraph
-│   │   │           └── pipeline.json
-│   │   └── static
-│   │       └── logo256-text.ico
+│   │   └── pipelines
+│   │       └── production
+│   │           ├── flair-anonymizer
+│   │           │   └── pipeline.json
+│   │           └── full-paragraph
+│   │               └── pipeline.json
 │   ├── aymurai-<VERSION>-py3-none-any.whl
 │   ├── banner.bmp
 │   ├── environment.yml
+│   ├── favicon.ico
 │   ├── header.bmp
 │   ├── install.bat
-│   ├── license.txt
 │   ├── run_server.bat
+│   ├── terms_and_conditions_es.txt
+│   ├── terms_and_conditions.txt
+│   ├── tray_runner.py
 │   └── uninstall.bat
 └── scripts
     ├── headers
@@ -89,7 +91,7 @@ If you are working in the development container, you can compile the installer u
 
 ```bash
 # Compile the installer
-wine ~/.wine/drive_c/Program\ Files/NSIS/makensis.exe -- scripts/installer.nsi
+wine ~/.wine/drive_c/Program\ Files/NSIS/makensis.exe /INPUTCHARSET UTF8 scripts/installer.nsi
 ```
 
 The installer executable will be created in the `build` directory.

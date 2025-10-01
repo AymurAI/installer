@@ -8,4 +8,6 @@ dependencies:
   - openjdk==22.0.1
   - git==2.46.2
   - pip:
-    - ./aymurai-1.1.10-py3-none-any.whl
+    - ./aymurai-1.1.12-py3-none-any.whl
+    - pillow==10.4.0
+    - pystray==0.19.5

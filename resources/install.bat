@@ -7,6 +7,13 @@ if not defined CONDA_DIR (
     set "CONDA_DIR=%USERPROFILE%\miniconda3"
 )
 
+REM Define the writable application data directory under the current user profile
+if not defined LOCALAPPDATA (
+    echo Error: LOCALAPPDATA environment variable is not defined.
+    exit /b 1
+)
+set "AYMURAI_DATA_DIR=%LOCALAPPDATA%\AymurAI"
+
 REM Check if Miniconda is already installed
 if exist "%CONDA_DIR%" (
     echo Miniconda is already installed.
@@ -66,32 +73,6 @@ if not exist "%SCRIPT_DIR%full_env" (
         )
     )
     
-    REM Workaround to fix python-magic issue
-    REM https://github.com/ahupp/python-magic/issues/248
-    call pip uninstall -y python-magic
-    if errorlevel 1 (
-        echo Conda environment creation failed.
-        exit /b 1
-    )
-
-    call pip install python-magic==0.4.27
-    if errorlevel 1 (
-        echo Conda environment creation failed.
-        exit /b 1
-    )
-    call pip install python-magic-bin==0.4.14
-    if errorlevel 1 (
-        echo Conda environment creation failed.
-        exit /b 1
-    )
-
-    REM Check if libmagic path is already in the PATH environment variable
-    powershell -Command "if (-not $env:PATH.Contains('magic\libmagic')) { Write-Host 'libmagic path not found in PATH, adding it...'; $sitePackages = (Get-ChildItem -Path (Get-Command python).Source).Directory.Parent.FullName + '\aymurai-backend\Lib\site-packages'; $libmagicPath = Join-Path -Path $sitePackages -ChildPath 'magic\libmagic'; [System.Environment]::SetEnvironmentVariable('PATH', $env:PATH + ';' + $libmagicPath, [System.EnvironmentVariableTarget]::User); Write-Host 'libmagic path added to PATH.' } else { Write-Host 'libmagic path already exists in PATH.' }"
-    if errorlevel 1 (
-        echo Conda environment creation failed.
-        exit /b 1
-    )
-
     REM Instal forked version of textract to fix this issue
     REM https://github.com/deanmalmgren/textract/issues/313
     call pip uninstall -y textract
@@ -128,19 +109,12 @@ if not exist "%SCRIPT_DIR%api\resources\api" (
     mkdir "%SCRIPT_DIR%api\resources\api"
 )
 
-REM Move pipelines and static directories to the api directory
+REM Move pipelines directory to the api directory
 if not exist "%SCRIPT_DIR%api\resources\pipelines" (
     move "%SCRIPT_DIR%pipelines" "%SCRIPT_DIR%api\resources\pipelines"
 ) else (
     if exist "%SCRIPT_DIR%pipelines" (
         rmdir /s /q "%SCRIPT_DIR%pipelines"
-    )
-)
-if not exist "%SCRIPT_DIR%api\resources\api\static" (
-    move "%SCRIPT_DIR%static" "%SCRIPT_DIR%api\resources\api\static"
-) else (
-    if exist "%SCRIPT_DIR%static" (
-        rmdir /s /q "%SCRIPT_DIR%static"
     )
 )
 
@@ -152,14 +126,37 @@ if not exist "%SCRIPT_DIR%api\main.py" (
     curl --ssl-no-revoke -o "%SCRIPT_DIR%api\main.py" https://raw.githubusercontent.com/AymurAI/backend/refs/heads/dev/aymurai/api/main.py
 )
 
-REM Define the cache directories
-set "AYMURAI_CACHE_BASEPATH=%SCRIPT_DIR%cache\aymurai"
-set "DISKCACHE_ROOT=%SCRIPT_DIR%cache\diskcache"
-set "FLAIR_CACHE_ROOT=%SCRIPT_DIR%models\flair"
-set "TFHUB_CACHE_DIR=%SCRIPT_DIR%models\tfhub"
+REM Prepare writable cache/model/data directories under LOCALAPPDATA
+set "AYMURAI_CACHE_BASEPATH=%AYMURAI_DATA_DIR%\cache\aymurai"
+set "DISKCACHE_ROOT=%AYMURAI_DATA_DIR%\cache\diskcache"
+set "FLAIR_CACHE_ROOT=%AYMURAI_DATA_DIR%\models\flair"
+set "TFHUB_CACHE_DIR=%AYMURAI_DATA_DIR%\models\tfhub"
+set "AYMURAI_SQLITE_DIR=%AYMURAI_DATA_DIR%\data\sqlite"
+set "AYMURAI_DATABASE_FILE=%AYMURAI_SQLITE_DIR%\database.db"
+set "AYMURAI_LOG_DIR=%AYMURAI_DATA_DIR%\logs"
+set "AYMURAI_LOG_FILE=%AYMURAI_LOG_DIR%\backend.log"
+
+for %%D in (
+    "%AYMURAI_DATA_DIR%"
+    "%AYMURAI_DATA_DIR%\cache"
+    "%AYMURAI_CACHE_BASEPATH%"
+    "%DISKCACHE_ROOT%"
+    "%AYMURAI_DATA_DIR%\models"
+    "%FLAIR_CACHE_ROOT%"
+    "%TFHUB_CACHE_DIR%"
+    "%AYMURAI_DATA_DIR%\data"
+    "%AYMURAI_SQLITE_DIR%"
+    "%AYMURAI_LOG_DIR%"
+) do (
+    if not exist "%%~D" mkdir "%%~D"
+)
 
 REM Define the RESOURCES_BASEPATH environment variable
 set "RESOURCES_BASEPATH=%SCRIPT_DIR%api\resources"
+set "AYMURAI_TRAY_ICON=%SCRIPT_DIR%resources\app\build\app\favicon.ico"
+
+REM Point SQLAlchemy to the writable SQLite database location (convert backslashes to forward slashes)
+set "SQLALCHEMY_DATABASE_URI=sqlite:///%AYMURAI_DATABASE_FILE:\=/%%"
 
 REM Run the api main.py file to download the models
 call python "%SCRIPT_DIR%api\main.py"
