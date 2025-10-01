@@ -31,7 +31,7 @@ LOG_FILE = Path(os.environ.get("AYMURAI_LOG_FILE", LOG_DIR / "backend.log"))
 ICON_PATH = Path(
     os.environ.get(
         "AYMURAI_TRAY_ICON",
-        SCRIPT_DIR / "api" / "resources" / "api" / "static" / "logo256-text.ico",
+        SCRIPT_DIR / "resources" / "app" / "build" / "app" / "favicon.ico",
     )
 )
 
@@ -189,11 +189,11 @@ class TrayApp:
             ICON_PATH
             if ICON_PATH.exists()
             else SCRIPT_DIR
-            / "api"
             / "resources"
-            / "api"
-            / "static"
-            / "logo256-text.ico"
+            / "app"
+            / "build"
+            / "app"
+            / "favicon.ico"
         )
         with Image.open(candidate) as source:
             return source.copy()

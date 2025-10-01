@@ -109,19 +109,12 @@ if not exist "%SCRIPT_DIR%api\resources\api" (
     mkdir "%SCRIPT_DIR%api\resources\api"
 )
 
-REM Move pipelines and static directories to the api directory
+REM Move pipelines directory to the api directory
 if not exist "%SCRIPT_DIR%api\resources\pipelines" (
     move "%SCRIPT_DIR%pipelines" "%SCRIPT_DIR%api\resources\pipelines"
 ) else (
     if exist "%SCRIPT_DIR%pipelines" (
         rmdir /s /q "%SCRIPT_DIR%pipelines"
-    )
-)
-if not exist "%SCRIPT_DIR%api\resources\api\static" (
-    move "%SCRIPT_DIR%static" "%SCRIPT_DIR%api\resources\api\static"
-) else (
-    if exist "%SCRIPT_DIR%static" (
-        rmdir /s /q "%SCRIPT_DIR%static"
     )
 )
 
@@ -160,6 +153,7 @@ for %%D in (
 
 REM Define the RESOURCES_BASEPATH environment variable
 set "RESOURCES_BASEPATH=%SCRIPT_DIR%api\resources"
+set "AYMURAI_TRAY_ICON=%SCRIPT_DIR%resources\app\build\app\favicon.ico"
 
 REM Point SQLAlchemy to the writable SQLite database location (convert backslashes to forward slashes)
 set "SQLALCHEMY_DATABASE_URI=sqlite:///%AYMURAI_DATABASE_FILE:\=/%%"

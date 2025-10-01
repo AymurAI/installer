@@ -34,7 +34,7 @@ set "AYMURAI_SQLITE_DIR=%AYMURAI_DATA_DIR%\data\sqlite"
 set "AYMURAI_DATABASE_FILE=%AYMURAI_SQLITE_DIR%\database.db"
 set "AYMURAI_LOG_DIR=%AYMURAI_DATA_DIR%\logs"
 set "AYMURAI_LOG_FILE=%AYMURAI_LOG_DIR%\backend.log"
-set "AYMURAI_TRAY_ICON=%SCRIPT_DIR%\api\resources\api\static\logo256-text.ico"
+set "AYMURAI_TRAY_ICON=%SCRIPT_DIR%\resources\app\build\app\favicon.ico"
 
 for %%D in (
     "%AYMURAI_DATA_DIR%"

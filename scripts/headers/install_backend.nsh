@@ -14,6 +14,16 @@
     File "${SOURCE_DIR}\run_server.bat"
     File "${SOURCE_DIR}\tray_runner.py"
     File /r "${SOURCE_DIR}\api\*.*"
+    
+    ; Create frontend resources directory structure for the favicon
+    CreateDirectory "$INSTDIR\resources\app\build\app"
+    
+    ; Copy favicon directly to the frontend resources directory
+    SetOutPath "$INSTDIR\resources\app\build\app"
+    File "${SOURCE_DIR}\favicon.ico"
+    
+    ; Return to the installation directory
+    SetOutPath $INSTDIR
 
     ; Run the installation batch file and capture the return code
     DetailPrint "$(STR_DETAIL_BACKEND_INSTALL)"

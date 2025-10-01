@@ -48,7 +48,7 @@ InstallDirRegKey HKLM "Software\${APP_NAME}" "Install_Dir"
 ;--------------------------------
 ; UI assets and text definitions
 
-!define MUI_ICON "..\resources\api\static\logo256-text.ico"
+!define MUI_ICON "..\resources\favicon.ico"
 !define MUI_HEADERIMAGE_BITMAP "..\resources\header.bmp"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "..\resources\banner.bmp"
 
